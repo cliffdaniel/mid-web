@@ -1,0 +1,148 @@
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { useAuth } from "../../../contexts/AuthContext";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { Button } from "@mui/material";
+import ModalForm from "./ModalForm";
+import { collection, addDoc, setDoc, doc, onSnapshot } from "firebase/firestore";
+import fireStoreDB from "./../../../config/firebase";
+
+interface Project {
+  id: string | null;
+  description: string;
+  area: string;
+  location: string;
+  client: string;
+  architect: string;
+  mutua: string;
+  employee: string;
+  company: string;
+  year: string;
+  photography: string;
+  images: string[] | null;
+}
+
+const Projects: React.FC = () => {
+  const { isAuthenticated } = useAuth();
+  const router = useRouter();
+
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [project, setProject] = useState<Project | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        onSnapshot(collection(fireStoreDB, "projects"), (response: any) => {
+          const projects: any = []
+          response.forEach((d: any) => {
+            projects.unshift( { ...d.data(), id: d.id })
+          });
+          setProjects(projects);
+          setIsLoading(false);
+        });
+      } catch (error) {
+        console.error("Error al obtener la lista de proyectos:", error);
+      }
+    };
+
+    if (!isAuthenticated) {
+      router.push("/admin/login");
+    } else {
+      fetchProjects();
+    }
+  }, []);
+
+  if (!isAuthenticated) {
+    return null;
+  }
+
+  const columns: GridColDef[] = [
+    { field: "id", headerName: "ID", width: 7 },
+    { field: "description", headerName: "Descripción", flex: 1 },
+    { field: "area", headerName: "Área", flex: 1 },
+    { field: "location", headerName: "Ubicación", flex: 1 },
+    { field: "client", headerName: "Cliente", flex: 1 },
+    { field: "architect", headerName: "Arquitecto", flex: 1 },
+    { field: "mutua", headerName: "Mutua", flex: 1 },
+    { field: "employee", headerName: "Empleado", flex: 1 },
+    { field: "company", headerName: "Compañía", flex: 1 },
+    { field: "year", headerName: "Año", flex: 1 },
+    { field: "photography", headerName: "Fotógrafo", flex: 1 },
+  ];
+
+  const handleOpenModal = (params?: any) => {
+    if (params?.id) {
+      setProject(params?.row);
+    }
+
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setProject(null);
+    setIsModalOpen(false);
+  };
+
+  const handleAddProject = async (newProject: Project) => {
+    if (newProject.id) {
+      const projectDocRef = doc(fireStoreDB, "projects", newProject.id);
+      await setDoc(projectDocRef, newProject);
+    } else {
+      await addDoc(collection(fireStoreDB, "projects"), newProject)
+    }
+  };
+
+  return (
+    <div className="px-4 py-12 sm:px-6 lg:px-8">
+      <header>
+        <div className="py-6 mx-auto max-w-7xl">
+          <h1 className="text-3xl font-bold leading-tight text-gray-900">
+            Panel de Proyectos
+          </h1>
+        </div>
+      </header>
+
+      <main>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleOpenModal}
+          style={{ backgroundColor: "#1976D2" }}
+        >
+          Agregar Proyecto
+        </Button>
+
+        <div style={{ height: 400, width: "100%", marginTop: "45px" }}>
+          <DataGrid
+            loading={isLoading}
+            rows={projects.length ? projects : []}
+            columns={columns}
+            pagination={true}
+            paginationMode="client"
+            initialState={{
+              pagination: {
+                paginationModel: {
+                  pageSize: 10,
+                },
+              },
+            }}
+            pageSizeOptions={[10]}
+            rowCount={projects.length}
+            onRowClick={handleOpenModal}
+          />
+        </div>
+
+        <ModalForm
+          open={isModalOpen}
+          project={project}
+          onClose={handleCloseModal}
+          onSubmit={handleAddProject}
+        />
+      </main>
+    </div>
+  );
+};
+
+export default Projects;

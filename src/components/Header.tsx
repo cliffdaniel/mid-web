@@ -3,7 +3,11 @@ import { FiMenu, FiX } from 'react-icons/fi';
 import Image from 'next/image';
 import Link from 'next/link';
 
-export const Header = () => {
+type HeaderProps = {
+  isAdmin: boolean;
+};
+
+export const Header: React.FC<HeaderProps> = ({ isAdmin }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuIcon, setMenuIcon] = useState('menu');
 
@@ -12,13 +16,18 @@ export const Header = () => {
     setMenuIcon(menuOpen ? 'menu' : 'close');
   };
 
-  const menuItems = [
-    { text: 'estudio', link: '/estudio' },
-    { text: 'news', link: '/news' },
-    { text: 'proyectos', link: '/proyectos' },
-    { text: 'arquitectura', link: '/arquitectura' },
-    { text: 'diseño', link: '/diseno' },
-  ];
+  const menuItems = isAdmin
+    ? [
+        { text: 'proyectos', link: '/admin/proyectos' },
+        { text: 'cerrar sesión', link: '/admin/logout' },
+      ]
+    : [
+        { text: 'estudio', link: '/estudio' },
+        { text: 'news', link: '/news' },
+        { text: 'proyectos', link: '/proyectos' },
+        { text: 'arquitectura', link: '/arquitectura' },
+        { text: 'diseño', link: '/diseno' },
+      ];
 
   return (
     <header className="flex justify-between p-4 mt-[60px]">
@@ -34,7 +43,7 @@ export const Header = () => {
           <FiX size={24} className="cursor-pointer" />
         )}
         {menuOpen && (
-          <div className="absolute right-0 z-50 top-12">
+          <div className="absolute right-0 z-50 top-12 w-[120px]">
             <ul className="text-right">
               {menuItems.map((item, index) => (
                 <li key={index}>

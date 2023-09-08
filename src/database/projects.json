@@ -1,0 +1,36 @@
+[
+  {
+    "id": 1,
+    "description": "Proyecto A",
+    "area": "1000 m²",
+    "location": "Ciudad X",
+    "client": "Cliente A",
+    "architect": "Arquitecto A",
+    "mutua": "Mutua A",
+    "employee": "Empleado A",
+    "company": "Compañía A",
+    "year": "2022",
+    "photography": "Fotógrafo A",
+    "images": [
+      { "image": "/public/images/proyectoA1.jpg" },
+      { "image": "/public/images/proyectoA2.jpg" }
+    ]
+  },
+  {
+    "id": 2,
+    "description": "Proyecto B",
+    "area": "800 m²",
+    "location": "Ciudad Y",
+    "client": "Cliente B",
+    "architect": "Arquitecto B",
+    "mutua": "Mutua B",
+    "employee": "Empleado B",
+    "company": "Compañía B",
+    "year": "2021",
+    "photography": "Fotógrafo B",
+    "images": [
+      { "image": "/public/images/proyectoA1.jpg" },
+      { "image": "/public/images/proyectoA2.jpg" }
+    ]
+  }
+]
