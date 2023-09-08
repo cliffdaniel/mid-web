@@ -5,10 +5,13 @@ import {
   Box,
   Typography,
   TextField,
-  Grid
+  Grid,
+  LinearProgress
 } from '@mui/material';
-import { Uploader } from "uploader";
 import { useFormik } from 'formik';
+import ImageList from './ImageList';
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { fireStoreStorage } from "./../../../config/firebase";
 
 interface Project {
   id: string | null;
@@ -22,7 +25,7 @@ interface Project {
   company: string;
   year: string;
   photography: string;
-  images: string[] | null;
+  images: string[];
 }
 
 interface ModalFormProps {
@@ -32,12 +35,56 @@ interface ModalFormProps {
   onSubmit: (data: Project) => void;
 }
 
-const uploader = Uploader({
-  apiKey: "free",
-});
-
 const ModalForm: React.FC<ModalFormProps> = ({ open, project, onClose, onSubmit }) => {
+  const [image, setImage] = useState<File | null>(null);
+  const [progress, setProgress] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
   const [files, setFiles] = useState<string[]>([]);
+
+  const handleChangeFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setImage(e.target.files[0]);
+    }
+  };
+
+  const handleUpload = () => {
+    if (image) {
+      setIsUploading(true);
+
+      const timestamp = Date.now();
+      const uniqueFileName = `${timestamp}_${image.name}`;
+      const storageRef = ref(fireStoreStorage, `images/${uniqueFileName}`);
+      const uploadTask = uploadBytesResumable(storageRef, image);
+
+      uploadTask.on(
+        'state_changed',
+        (snapshot) => {
+          const percentage = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          setProgress(percentage);
+        },
+        (error) => {
+          setIsUploading(false);
+        },
+        () => {
+          setIsUploading(false);
+          getDownloadURL(storageRef)
+            .then((url) => {
+              setFiles((prevFiles) => (prevFiles ? [...prevFiles, url] : [url]));
+            })
+            .catch((error) => {
+              console.error('Error al obtener la URL de la imagen:', error);
+            });
+        }
+      );
+    }
+  };
+
+  const handleDeleteImage = (indexToDelete: number) => {
+    const updatedImages = files?.filter((_, index) => index !== indexToDelete);
+    if (updatedImages) {
+      setFiles(updatedImages);
+    }
+  };
 
   const formik = useFormik<Project>({
     initialValues: {
@@ -70,18 +117,6 @@ const ModalForm: React.FC<ModalFormProps> = ({ open, project, onClose, onSubmit 
     },
   });
 
-  const uploadFiles = () => {
-    uploader.open({ multi: true }).then(
-      (selectedFiles) => {
-        if (selectedFiles.length) {
-          const fileUrls = selectedFiles.map((file) => file.fileUrl);
-          setFiles(fileUrls);
-        }
-      },
-      (error) => alert(error)
-    );
-  }
-
   useEffect(() => {
     if (files) {
       formik.values.images = files;
@@ -91,6 +126,8 @@ const ModalForm: React.FC<ModalFormProps> = ({ open, project, onClose, onSubmit 
   useEffect(() => {
     if (project !== null) {
       formik.setValues(project);
+      console.log(project.images);
+      setFiles(project.images);
     }
   }, [project]);
 
@@ -212,11 +249,24 @@ const ModalForm: React.FC<ModalFormProps> = ({ open, project, onClose, onSubmit 
                 onChange={formik.handleChange}
               />
             </Grid>
-            <Button
-              onClick={uploadFiles}
-              style={{ marginLeft: '10px', marginTop: '25px'}}>
-              Añadir Imágenes
-            </Button>
+            <Grid item xs={12}>
+              <div style={{marginBottom: '15px'}}>
+                {files && <ImageList images={files} onDelete={handleDeleteImage} />}
+              </div>
+              <div>
+                <input type="file" onChange={handleChangeFile} disabled={isUploading} />
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleUpload}
+                  disabled={!image || isUploading}
+                  style={{ backgroundColor: "#1976D2", color: "#fff" }}
+                >
+                  Subir Imagen
+                </Button>
+                {isUploading && <LinearProgress variant="determinate" value={progress} style={{ marginTop: '15px' }} />}
+              </div>
+            </Grid>
           </Grid>
           <Button
             variant="contained"

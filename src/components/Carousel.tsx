@@ -16,8 +16,8 @@ interface CarouselProps {
 const CustomCarousel: React.FC<CarouselProps> = ({ images }) => {
   const renderCarouselItem = (item: ImageObject, index: number) => {
     return (
-      <>
-        <div key={index} className="carousel-slide">
+      <div key={index}>
+        <div className="carousel-slide">
           <img src={item.src} alt={item.title} />
         </div>
         <div className="flex mt-[40px] justify-center items-center flex-col">
@@ -28,7 +28,7 @@ const CustomCarousel: React.FC<CarouselProps> = ({ images }) => {
             {item.subtitle}
           </p>
         </div>
-      </>
+      </div>
     );
   };
 

@@ -1,6 +1,7 @@
 import { initializeApp, getApps } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { EmailAuthProvider, getAuth } from "firebase/auth";
+import { getStorage } from "firebase/storage";
 import { config } from './firebase.config';
 
 const firebaseConfig = {
@@ -16,6 +17,7 @@ let app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 const fireStoreProvider = new EmailAuthProvider();
 const fireStoreDB = getFirestore(app);
 const fireStoreAuth = getAuth(app);
+const fireStoreStorage = getStorage(app);
 
-export { fireStoreProvider, fireStoreAuth };
+export { fireStoreProvider, fireStoreAuth, fireStoreStorage };
 export default fireStoreDB;

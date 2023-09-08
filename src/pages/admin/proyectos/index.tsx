@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useAuth } from "../../../contexts/AuthContext";
+import { collection, addDoc, setDoc, doc, deleteDoc, onSnapshot, query, orderBy } from "firebase/firestore";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Button } from "@mui/material";
 import ModalForm from "./ModalForm";
-import { collection, addDoc, setDoc, doc, onSnapshot } from "firebase/firestore";
+import DeleteIcon from '@mui/icons-material/Delete';
+import HomeIcon from '@mui/icons-material/Home';
 import fireStoreDB from "./../../../config/firebase";
 
 interface Project {
@@ -19,7 +21,7 @@ interface Project {
   company: string;
   year: string;
   photography: string;
-  images: string[] | null;
+  images: string[];
 }
 
 const Projects: React.FC = () => {
@@ -27,17 +29,20 @@ const Projects: React.FC = () => {
   const router = useRouter();
 
   const [projects, setProjects] = useState<Project[]>([]);
-  const [project, setProject] = useState<Project | null>(null);
+  const [project, setProject] = useState<Project>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        onSnapshot(collection(fireStoreDB, "projects"), (response: any) => {
+        const projectsCollection = collection(fireStoreDB, 'projects');
+        const orderedQuery = query(projectsCollection, orderBy('createdAt', 'desc'));
+
+        onSnapshot(orderedQuery, (response: any) => {
           const projects: any = []
-          response.forEach((d: any) => {
-            projects.unshift( { ...d.data(), id: d.id })
+          response.forEach((doc: any) => {
+            projects.unshift( { ...doc.data(), id: doc.id })
           });
           setProjects(projects);
           setIsLoading(false);
@@ -59,7 +64,19 @@ const Projects: React.FC = () => {
   }
 
   const columns: GridColDef[] = [
-    { field: "id", headerName: "ID", width: 7 },
+    {
+      field: "id",
+      headerName: "ID",
+      align: 'center',
+      width: 7,
+      renderCell: () => {
+        return (
+          <div>
+            <HomeIcon />
+          </div>
+        );
+      },
+    },
     { field: "description", headerName: "Descripción", flex: 1 },
     { field: "area", headerName: "Área", flex: 1 },
     { field: "location", headerName: "Ubicación", flex: 1 },
@@ -70,6 +87,26 @@ const Projects: React.FC = () => {
     { field: "company", headerName: "Compañía", flex: 1 },
     { field: "year", headerName: "Año", flex: 1 },
     { field: "photography", headerName: "Fotógrafo", flex: 1 },
+    {
+      field: 'actions',
+      headerName: '',
+      align: 'center',
+      width: 100,
+      renderCell: (params) => {
+        const handleDeleteClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+          event.stopPropagation();
+          handleDelete(params.row.id);
+        };
+
+        return (
+          <div>
+            <button onClick={handleDeleteClick}>
+              <DeleteIcon />
+            </button>
+          </div>
+        );
+      },
+    },
   ];
 
   const handleOpenModal = (params?: any) => {
@@ -91,6 +128,15 @@ const Projects: React.FC = () => {
       await setDoc(projectDocRef, newProject);
     } else {
       await addDoc(collection(fireStoreDB, "projects"), newProject)
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      const projectDocRef = doc(fireStoreDB, 'projects', id);
+      await deleteDoc(projectDocRef);
+    } catch (error) {
+      console.error('Error al eliminar el registro:', error);
     }
   };
 
