@@ -29,7 +29,7 @@ const Projects: React.FC = () => {
   const router = useRouter();
 
   const [projects, setProjects] = useState<Project[]>([]);
-  const [project, setProject] = useState<Project>();
+  const [project, setProject] = useState<Project>({} as Project);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -118,7 +118,7 @@ const Projects: React.FC = () => {
   };
 
   const handleCloseModal = () => {
-    setProject(null);
+    setProject({} as Project);
     setIsModalOpen(false);
   };
 
