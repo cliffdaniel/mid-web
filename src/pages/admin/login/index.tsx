@@ -1,5 +1,3 @@
-// pages/login/index.tsx
-
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
@@ -7,7 +5,6 @@ import * as Yup from 'yup';
 import { useAuth } from '../../../contexts/AuthContext';
 import usersData from '../../../database/users.json';
 
-// Define un tipo para un usuario
 interface User {
   username: string;
   password: string;

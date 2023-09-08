@@ -18,20 +18,20 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
 
   return (
     <>
+    <AuthProvider>
       {isAdminPage ? (
-        <AuthProvider>
-          <ThemeProvider theme={theme}>
-            <MainLayout isAdmin={true}>
-              <CssBaseline />
-              <Component {...pageProps} />
-            </MainLayout>
-          </ThemeProvider>
-        </AuthProvider>
+        <ThemeProvider theme={theme}>
+          <MainLayout isAdmin={true}>
+            <CssBaseline />
+            <Component {...pageProps} />
+          </MainLayout>
+        </ThemeProvider>
       ) : (
         <MainLayout isAdmin={false}>
           <Component {...pageProps} />
         </MainLayout>
       )}
+      </AuthProvider>
     </>
   );
 };
