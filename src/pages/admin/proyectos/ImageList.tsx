@@ -10,7 +10,7 @@ interface ImageListProps {
 const ImageList: React.FC<ImageListProps> = ({ images, onDelete }) => {
   return (
     <Grid container spacing={2}>
-      {images.map((image, index) => (
+      {images?.map((image, index) => (
         <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
           <Paper elevation={3} style={{ position: 'relative' }}>
             <img src={image} alt={image} style={{ maxWidth: '100%', height: 'auto' }} />
