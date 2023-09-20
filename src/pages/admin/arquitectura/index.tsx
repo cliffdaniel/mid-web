@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useAuth } from "../../../contexts/AuthContext";
-import { collection, addDoc, setDoc, doc, deleteDoc, onSnapshot, query, orderBy } from "firebase/firestore";
+import { collection, addDoc, setDoc, doc, deleteDoc, onSnapshot, query, orderBy, Timestamp } from "firebase/firestore";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Button } from "@mui/material";
 import ModalForm from "./ModalForm";
@@ -22,6 +22,8 @@ interface Project {
   year: string;
   photography: string;
   images: string[];
+  type: string;
+  createdAt: any;
 }
 
 const Projects: React.FC = () => {
@@ -36,7 +38,7 @@ const Projects: React.FC = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const projectsCollection = collection(fireStoreDB, 'projects');
+        const projectsCollection = collection(fireStoreDB, 'architecture');
         const orderedQuery = query(projectsCollection, orderBy('createdAt', 'desc'));
 
         onSnapshot(orderedQuery, (response: any) => {
@@ -87,6 +89,7 @@ const Projects: React.FC = () => {
     { field: "company", headerName: "Compañía", flex: 1 },
     { field: "year", headerName: "Año", flex: 1 },
     { field: "photography", headerName: "Fotógrafo", flex: 1 },
+    { field: "type", headerName: "Tipo", flex: 1 },
     {
       field: 'actions',
       headerName: '',
@@ -124,16 +127,18 @@ const Projects: React.FC = () => {
 
   const handleAddProject = async (newProject: Project) => {
     if (newProject.id) {
-      const projectDocRef = doc(fireStoreDB, "projects", newProject.id);
+      const projectDocRef = doc(fireStoreDB, "architecture", newProject.id);
       await setDoc(projectDocRef, newProject);
     } else {
-      await addDoc(collection(fireStoreDB, "projects"), newProject)
+      const timestamp = Timestamp.now();
+      newProject.createdAt = timestamp;
+      await addDoc(collection(fireStoreDB, "architecture"), newProject)
     }
   };
 
   const handleDelete = async (id: string) => {
     try {
-      const projectDocRef = doc(fireStoreDB, 'projects', id);
+      const projectDocRef = doc(fireStoreDB, 'architecture', id);
       await deleteDoc(projectDocRef);
     } catch (error) {
       console.error('Error al eliminar el registro:', error);
@@ -145,7 +150,7 @@ const Projects: React.FC = () => {
       <header>
         <div className="py-6 mx-auto max-w-7xl">
           <h1 className="text-3xl font-bold leading-tight text-gray-900">
-            Panel de Proyectos
+            Panel de Proyectos de Arquitectura
           </h1>
         </div>
       </header>

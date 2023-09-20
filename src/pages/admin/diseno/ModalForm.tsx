@@ -6,7 +6,11 @@ import {
   Typography,
   TextField,
   Grid,
-  LinearProgress
+  LinearProgress,
+  InputLabel,
+  FormControl,
+  MenuItem,
+  Select
 } from '@mui/material';
 import { useFormik } from 'formik';
 import ImageList from './ImageList';
@@ -26,6 +30,8 @@ interface Project {
   year: string;
   photography: string;
   images: string[];
+  type: string;
+  createdAt: any;
 }
 
 interface ModalFormProps {
@@ -100,6 +106,8 @@ const ModalForm: React.FC<ModalFormProps> = ({ open, project, onClose, onSubmit 
       year: '',
       photography: '',
       images: [] as string[],
+      type: '',
+      createdAt: '',
     },
     validate: (values) => {
       const errors: Partial<Record<keyof Project, string>> = {};
@@ -152,8 +160,8 @@ const ModalForm: React.FC<ModalFormProps> = ({ open, project, onClose, onSubmit 
         <Typography
           variant="h6"
           style={{ marginBottom: '25px' }}>
-            Agregar Proyecto
-          </Typography>
+          Agregar Proyecto
+        </Typography>
         <form onSubmit={formik.handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={6}>
@@ -248,8 +256,24 @@ const ModalForm: React.FC<ModalFormProps> = ({ open, project, onClose, onSubmit 
                 onChange={formik.handleChange}
               />
             </Grid>
+            <Grid item xs={6}>
+              <FormControl fullWidth>
+                <InputLabel htmlFor="type">Tipo</InputLabel>
+                <Select
+                  name="type"
+                  label="Tipo"
+                  id="type"
+                  value={formik.values.type || ''}
+                  onChange={formik.handleChange}
+                >
+                  <MenuItem value="mobiliario">Mobiliario</MenuItem>
+                  <MenuItem value="interiores">Interiores</MenuItem>
+                  <MenuItem value="stands">Stands</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
             <Grid item xs={12}>
-              <div style={{marginBottom: '15px'}}>
+              <div style={{ marginBottom: '15px' }}>
                 {files && <ImageList images={files} onDelete={handleDeleteImage} />}
               </div>
               <div>

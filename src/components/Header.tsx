@@ -19,6 +19,9 @@ export const Header: React.FC<HeaderProps> = ({ isAdmin }) => {
   const menuItems = isAdmin
     ? [
         { text: 'proyectos', link: '/admin/proyectos' },
+        { text: 'arquitectura', link: '/admin/arquitectura' },
+        { text: 'diseño', link: '/admin/diseno' },
+        { text: 'equipo', link: '/admin/equipo' },
         { text: 'cerrar sesión', link: '/admin/logout' },
       ]
     : [

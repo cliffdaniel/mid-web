@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useAuth } from "../../../contexts/AuthContext";
-import { collection, addDoc, setDoc, doc, deleteDoc, onSnapshot, query, orderBy } from "firebase/firestore";
+import { collection, addDoc, setDoc, doc, deleteDoc, onSnapshot, query, orderBy, Timestamp } from "firebase/firestore";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Button } from "@mui/material";
 import ModalForm from "./ModalForm";
@@ -11,17 +11,10 @@ import fireStoreDB from "./../../../config/firebase";
 
 interface Project {
   id: string | null;
-  description: string;
-  area: string;
-  location: string;
-  client: string;
-  architect: string;
-  mutua: string;
-  employee: string;
-  company: string;
-  year: string;
-  photography: string;
-  images: string[];
+  name: string;
+  lastName: string;
+  position: string;
+  createdAt: any;
 }
 
 const Projects: React.FC = () => {
@@ -36,7 +29,7 @@ const Projects: React.FC = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const projectsCollection = collection(fireStoreDB, 'projects');
+        const projectsCollection = collection(fireStoreDB, 'team');
         const orderedQuery = query(projectsCollection, orderBy('createdAt', 'desc'));
 
         onSnapshot(orderedQuery, (response: any) => {
@@ -77,16 +70,9 @@ const Projects: React.FC = () => {
         );
       },
     },
-    { field: "description", headerName: "Descripción", flex: 1 },
-    { field: "area", headerName: "Área", flex: 1 },
-    { field: "location", headerName: "Ubicación", flex: 1 },
-    { field: "client", headerName: "Cliente", flex: 1 },
-    { field: "architect", headerName: "Arquitecto", flex: 1 },
-    { field: "mutua", headerName: "Mutua", flex: 1 },
-    { field: "employee", headerName: "Empleado", flex: 1 },
-    { field: "company", headerName: "Compañía", flex: 1 },
-    { field: "year", headerName: "Año", flex: 1 },
-    { field: "photography", headerName: "Fotógrafo", flex: 1 },
+    { field: "name", headerName: "Nombre", flex: 1 },
+    { field: "lastName", headerName: "Apellido", flex: 1 },
+    { field: "position", headerName: "Cargo", flex: 1 },
     {
       field: 'actions',
       headerName: '',
@@ -124,16 +110,18 @@ const Projects: React.FC = () => {
 
   const handleAddProject = async (newProject: Project) => {
     if (newProject.id) {
-      const projectDocRef = doc(fireStoreDB, "projects", newProject.id);
+      const projectDocRef = doc(fireStoreDB, "team", newProject.id);
       await setDoc(projectDocRef, newProject);
     } else {
-      await addDoc(collection(fireStoreDB, "projects"), newProject)
+      const timestamp = Timestamp.now();
+      newProject.createdAt = timestamp;
+      await addDoc(collection(fireStoreDB, "team"), newProject)
     }
   };
 
   const handleDelete = async (id: string) => {
     try {
-      const projectDocRef = doc(fireStoreDB, 'projects', id);
+      const projectDocRef = doc(fireStoreDB, 'team', id);
       await deleteDoc(projectDocRef);
     } catch (error) {
       console.error('Error al eliminar el registro:', error);
@@ -145,7 +133,7 @@ const Projects: React.FC = () => {
       <header>
         <div className="py-6 mx-auto max-w-7xl">
           <h1 className="text-3xl font-bold leading-tight text-gray-900">
-            Panel de Proyectos
+            Panel de Equipo de Trabajo
           </h1>
         </div>
       </header>
