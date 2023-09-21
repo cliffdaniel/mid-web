@@ -10,11 +10,11 @@ interface CarouselProps {
 export const AboutCarousel: React.FC<CarouselProps> = ({ images }) => {
   const renderCarouselItem = (item: string, index: number) => {
     return (
-      <>
+      <div key={index}>
         <div key={item} className="carousel-slide">
           <img src={item} alt={item} />
         </div>
-      </>
+      </div>
     );
   };
 

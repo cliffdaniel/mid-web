@@ -9,7 +9,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import HomeIcon from '@mui/icons-material/Home';
 import fireStoreDB from "./../../../config/firebase";
 
-interface Project {
+interface Member {
   id: string | null;
   name: string;
   lastName: string;
@@ -17,27 +17,27 @@ interface Project {
   createdAt: any;
 }
 
-const Projects: React.FC = () => {
+const Members: React.FC = () => {
   const { isAuthenticated } = useAuth();
   const router = useRouter();
 
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [project, setProject] = useState<Project>({} as Project);
+  const [members, setMembers] = useState<Member[]>([]);
+  const [member, setMember] = useState<Member>({} as Member);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    const fetchProjects = async () => {
+    const fetchMembers = async () => {
       try {
-        const projectsCollection = collection(fireStoreDB, 'team');
-        const orderedQuery = query(projectsCollection, orderBy('createdAt', 'desc'));
+        const membersCollection = collection(fireStoreDB, 'team');
+        const orderedQuery = query(membersCollection, orderBy('createdAt', 'desc'));
 
         onSnapshot(orderedQuery, (response: any) => {
-          const projects: any = []
+          const members: any = []
           response.forEach((doc: any) => {
-            projects.unshift( { ...doc.data(), id: doc.id })
+            members.unshift( { ...doc.data(), id: doc.id })
           });
-          setProjects(projects);
+          setMembers(members);
           setIsLoading(false);
         });
       } catch (error) {
@@ -48,7 +48,7 @@ const Projects: React.FC = () => {
     if (!isAuthenticated) {
       router.push("/admin/login");
     } else {
-      fetchProjects();
+      fetchMembers();
     }
   }, []);
 
@@ -97,32 +97,32 @@ const Projects: React.FC = () => {
 
   const handleOpenModal = (params?: any) => {
     if (params?.id) {
-      setProject(params?.row);
+      setMember(params?.row);
     }
 
     setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
-    setProject({} as Project);
+    setMember({} as Member);
     setIsModalOpen(false);
   };
 
-  const handleAddProject = async (newProject: Project) => {
-    if (newProject.id) {
-      const projectDocRef = doc(fireStoreDB, "team", newProject.id);
-      await setDoc(projectDocRef, newProject);
+  const handleAddMember = async (newMember: Member) => {
+    if (newMember.id) {
+      const memberDocRef = doc(fireStoreDB, "team", newMember.id);
+      await setDoc(memberDocRef, newMember);
     } else {
       const timestamp = Timestamp.now();
-      newProject.createdAt = timestamp;
-      await addDoc(collection(fireStoreDB, "team"), newProject)
+      newMember.createdAt = timestamp;
+      await addDoc(collection(fireStoreDB, "team"), newMember)
     }
   };
 
   const handleDelete = async (id: string) => {
     try {
-      const projectDocRef = doc(fireStoreDB, 'team', id);
-      await deleteDoc(projectDocRef);
+      const memberDocRef = doc(fireStoreDB, 'team', id);
+      await deleteDoc(memberDocRef);
     } catch (error) {
       console.error('Error al eliminar el registro:', error);
     }
@@ -151,7 +151,7 @@ const Projects: React.FC = () => {
         <div style={{ height: 400, width: "100%", marginTop: "45px" }}>
           <DataGrid
             loading={isLoading}
-            rows={projects.length ? projects : []}
+            rows={members.length ? members : []}
             columns={columns}
             pagination={true}
             paginationMode="client"
@@ -163,20 +163,20 @@ const Projects: React.FC = () => {
               },
             }}
             pageSizeOptions={[10]}
-            rowCount={projects.length}
+            rowCount={members.length}
             onRowClick={handleOpenModal}
           />
         </div>
 
         <ModalForm
           open={isModalOpen}
-          project={project}
+          member={member}
           onClose={handleCloseModal}
-          onSubmit={handleAddProject}
+          onSubmit={handleAddMember}
         />
       </main>
     </div>
   );
 };
 
-export default Projects;
+export default Members;

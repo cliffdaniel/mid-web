@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import { useFormik } from 'formik';
 
-interface Project {
+interface Member {
   id: string | null;
   name: string;
   lastName: string;
@@ -19,13 +19,13 @@ interface Project {
 
 interface ModalFormProps {
   open: boolean;
-  project: Project | null;
+  member: Member | null;
   onClose: () => void;
-  onSubmit: (data: Project) => void;
+  onSubmit: (data: Member) => void;
 }
 
-const ModalForm: React.FC<ModalFormProps> = ({ open, project, onClose, onSubmit }) => {
-   const formik = useFormik<Project>({
+const ModalForm: React.FC<ModalFormProps> = ({ open, member, onClose, onSubmit }) => {
+   const formik = useFormik<Member>({
     initialValues: {
       id: '',
       name: '',
@@ -34,7 +34,7 @@ const ModalForm: React.FC<ModalFormProps> = ({ open, project, onClose, onSubmit 
       createdAt: '',
     },
     validate: (values) => {
-      const errors: Partial<Record<keyof Project, string>> = {};
+      const errors: Partial<Record<keyof Member, string>> = {};
 
       if (!values.name) {
         errors.name = 'Campo obligatorio';
@@ -63,10 +63,10 @@ const ModalForm: React.FC<ModalFormProps> = ({ open, project, onClose, onSubmit 
   };
 
   useEffect(() => {
-    if (project !== null) {
-      formik.setValues(project);
+    if (member !== null) {
+      formik.setValues(member);
     }
-  }, [project]);
+  }, [member]);
 
   return (
     <Modal open={open} onClose={handleClose}>
