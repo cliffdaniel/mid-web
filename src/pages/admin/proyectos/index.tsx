@@ -1,28 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useAuth } from "../../../contexts/AuthContext";
-import { collection, addDoc, setDoc, doc, deleteDoc, onSnapshot, query, orderBy } from "firebase/firestore";
+import { collection, addDoc, setDoc, doc, deleteDoc, onSnapshot, query, orderBy, Timestamp } from "firebase/firestore";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Button } from "@mui/material";
 import ModalForm from "./ModalForm";
 import DeleteIcon from '@mui/icons-material/Delete';
 import HomeIcon from '@mui/icons-material/Home';
 import fireStoreDB from "./../../../config/firebase";
-
-interface Project {
-  id: string | null;
-  description: string;
-  area: string;
-  location: string;
-  client: string;
-  architect: string;
-  mutua: string;
-  employee: string;
-  company: string;
-  year: string;
-  photography: string;
-  images: string[];
-}
+import Project from "@/models/project";
 
 const Projects: React.FC = () => {
   const { isAuthenticated } = useAuth();
@@ -77,6 +63,7 @@ const Projects: React.FC = () => {
         );
       },
     },
+    { field: "name", headerName: "Nombre", flex: 1 },
     { field: "description", headerName: "Descripción", flex: 1 },
     { field: "area", headerName: "Área", flex: 1 },
     { field: "location", headerName: "Ubicación", flex: 1 },
@@ -127,6 +114,8 @@ const Projects: React.FC = () => {
       const projectDocRef = doc(fireStoreDB, "projects", newProject.id);
       await setDoc(projectDocRef, newProject);
     } else {
+      const timestamp = Timestamp.now();
+      newProject.createdAt = timestamp;
       await addDoc(collection(fireStoreDB, "projects"), newProject)
     }
   };

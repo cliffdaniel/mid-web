@@ -1,8 +1,38 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Masonry, { ResponsiveMasonry } from 'react-responsive-masonry';
+import fireStoreDB from "@/config/firebase";
+import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
+import Project from "@/models/project";
 
 const Proyectos: React.FC = () => {
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [activeOption, setActiveOption] = useState(0);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const projectsCollection = collection(fireStoreDB, "projects");
+        const orderedQuery = query(
+          projectsCollection,
+          orderBy("createdAt", "desc")
+        );
+
+        onSnapshot(orderedQuery, (response: any) => {
+          const projects: any = [];
+          response.forEach((doc: any) => {
+            projects.unshift({ ...doc.data(), id: doc.id });
+          });
+          setProjects(projects);
+          setIsLoading(false);
+        });
+      } catch (error) {
+        console.error("Error al obtener la lista de proyectos:", error);
+      }
+    };
+
+    fetchProjects();
+  }, []);
 
   const handleOptionClick = (optionIndex: number) => {
     setActiveOption(optionIndex);

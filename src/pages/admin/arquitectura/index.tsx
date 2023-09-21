@@ -8,23 +8,7 @@ import ModalForm from "./ModalForm";
 import DeleteIcon from '@mui/icons-material/Delete';
 import HomeIcon from '@mui/icons-material/Home';
 import fireStoreDB from "./../../../config/firebase";
-
-interface Project {
-  id: string | null;
-  description: string;
-  area: string;
-  location: string;
-  client: string;
-  architect: string;
-  mutua: string;
-  employee: string;
-  company: string;
-  year: string;
-  photography: string;
-  images: string[];
-  type: string;
-  createdAt: any;
-}
+import Project from "@/models/project";
 
 const Projects: React.FC = () => {
   const { isAuthenticated } = useAuth();
@@ -79,6 +63,7 @@ const Projects: React.FC = () => {
         );
       },
     },
+    { field: "name", headerName: "Nombre", flex: 1 },
     { field: "description", headerName: "Descripción", flex: 1 },
     { field: "area", headerName: "Área", flex: 1 },
     { field: "location", headerName: "Ubicación", flex: 1 },

@@ -13,26 +13,10 @@ import {
   Select
 } from '@mui/material';
 import { useFormik } from 'formik';
-import ImageList from './ImageList';
+import ImageList from '../../../components/admin/ImageList';
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { fireStoreStorage } from "./../../../config/firebase";
-
-interface Project {
-  id: string | null;
-  description: string;
-  area: string;
-  location: string;
-  client: string;
-  architect: string;
-  mutua: string;
-  employee: string;
-  company: string;
-  year: string;
-  photography: string;
-  images: string[];
-  type: string;
-  createdAt: any;
-}
+import Project from '@/models/project';
 
 interface ModalFormProps {
   open: boolean;
@@ -95,6 +79,7 @@ const ModalForm: React.FC<ModalFormProps> = ({ open, project, onClose, onSubmit 
   const formik = useFormik<Project>({
     initialValues: {
       id: '',
+      name: '',
       description: '',
       area: '',
       location: '',
@@ -111,6 +96,10 @@ const ModalForm: React.FC<ModalFormProps> = ({ open, project, onClose, onSubmit 
     },
     validate: (values) => {
       const errors: Partial<Record<keyof Project, string>> = {};
+
+      if (!values.name) {
+        errors.name = 'Campo obligatorio';
+      }
 
       if (!values.description) {
         errors.description = 'Campo obligatorio';
@@ -154,7 +143,9 @@ const ModalForm: React.FC<ModalFormProps> = ({ open, project, onClose, onSubmit 
           bgcolor: 'background.paper',
           boxShadow: 24,
           p: 4,
-          minWidth: 400,
+          minWidth: 600,
+          maxHeight: '95vh',
+          overflow: 'auto',
         }}
       >
         <Typography
@@ -164,6 +155,17 @@ const ModalForm: React.FC<ModalFormProps> = ({ open, project, onClose, onSubmit 
         </Typography>
         <form onSubmit={formik.handleSubmit}>
           <Grid container spacing={2}>
+            <Grid item xs={6}>
+              <TextField
+                name="name"
+                label="Nombre"
+                fullWidth
+                value={formik.values.name}
+                onChange={formik.handleChange}
+                error={!!formik.errors.name}
+                helperText={formik.errors.name}
+              />
+            </Grid>
             <Grid item xs={6}>
               <TextField
                 name="description"

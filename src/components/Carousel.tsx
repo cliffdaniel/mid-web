@@ -17,8 +17,8 @@ const CustomCarousel: React.FC<CarouselProps> = ({ images }) => {
   const renderCarouselItem = (item: ImageObject, index: number) => {
     return (
       <div key={index}>
-        <div className="carousel-slide">
-          <img src={item.src} alt={item.title} />
+        <div className="carousel-slide h-[240px] md:h-[520px]">
+          <img src={item.src} alt={item.title} className='object-contain w-full h-full'/>
         </div>
         <div className="flex mt-[40px] justify-center items-center flex-col">
           <h3 className="text-black text-center font-medium text-sm leading-[23px] tracking-[1.4px] uppercase">

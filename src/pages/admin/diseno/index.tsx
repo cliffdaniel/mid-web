@@ -11,6 +11,7 @@ import fireStoreDB from "./../../../config/firebase";
 
 interface Project {
   id: string | null;
+  name: string;
   description: string;
   area: string;
   location: string;
@@ -79,6 +80,7 @@ const Projects: React.FC = () => {
         );
       },
     },
+    { field: "name", headerName: "Nombre", flex: 1 },
     { field: "description", headerName: "Descripción", flex: 1 },
     { field: "area", headerName: "Área", flex: 1 },
     { field: "location", headerName: "Ubicación", flex: 1 },
