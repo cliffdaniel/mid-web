@@ -33,15 +33,15 @@ export const Header: React.FC<HeaderProps> = ({ isAdmin }) => {
     ];
 
   return (
-    <header className="flex justify-between p-4 mt-[10px] md:mt-[60px]">
+    <header className="flex justify-between p-4 mt-[10px] md:mt-[60px] items-center">
       <div className="logo">
         <Link href={`/`}>
           <Image src="/mid-logo.png" alt="Logo" width={111} height={42} />
         </Link>
       </div>
-      <div className="relative" onClick={toggleMenu}>
+      <div className="relative cursor-pointer" onClick={toggleMenu}>
         {menuIcon === 'menu' ? (
-          <FiMenu size={24} className="cursor-pointer" />
+          <span className='text-bold'>Menu</span>
         ) : (
           <FiX size={24} className="cursor-pointer" />
         )}

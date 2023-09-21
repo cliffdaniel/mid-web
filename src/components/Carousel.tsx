@@ -20,6 +20,7 @@ const CustomCarousel: React.FC<CarouselProps> = ({ images }) => {
         <div className="carousel-slide h-[240px] md:h-[520px]">
           <img src={item.src} alt={item.title} className='object-contain w-full h-full'/>
         </div>
+        {item.title &&
         <div className="flex mt-[40px] justify-center items-center flex-col">
           <h3 className="text-black text-center font-medium text-sm leading-[23px] tracking-[1.4px] uppercase">
             {item.title}
@@ -27,7 +28,7 @@ const CustomCarousel: React.FC<CarouselProps> = ({ images }) => {
           <p className="text-gray-300 text-center font-roboto font-light text-xs leading-[12.1px] tracking-[1.75px] uppercase">
             {item.subtitle}
           </p>
-        </div>
+        </div>}
       </div>
     );
   };

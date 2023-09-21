@@ -59,7 +59,7 @@ const Diseno: React.FC = () => {
 
   return (
     <div className="gap-10 md:grid-cols-2 max-w-[1140px] mx-auto px-4 md:px-[35px]">
-      <div className="flex justify-center gap-4 mb-[60px]">
+      <div className="flex flex-col items-center gap-4 mb-4 md:flex-row md:justify-center mb-[30px]">
         {options.map((option) => (
           <div
             key={option.index}
@@ -72,16 +72,23 @@ const Diseno: React.FC = () => {
           </div>
         ))}
       </div>
+      {options[activeOption].text === 'interiores' && <div className="flex justify-center w-full mx-auto mb-4 text-center">partner: Gela Estudio</div>}
       {project && (
         <div>
           <CustomCarousel
             images={project.images.map((image) => ({
               src: image,
-              title: project.name,
-              subtitle: project.location,
+              title: '',
+              subtitle: '',
             }))}
           />
           <div className="flex flex-col items-center justify-center mt-4">
+            <h3 className="text-black text-center font-medium text-sm leading-[23px] tracking-[1.4px] uppercase mt-4">
+              {project.name}
+            </h3>
+            <p className="text-gray-300 text-center font-roboto font-light text-xs leading-[12.1px] tracking-[1.75px] uppercase mb-4">
+              {project.location}
+            </p>
             <div className="text-sm font-medium leading-6 text-center text-gray-800 uppercase tracking-1">
               Descripción: {project.description}
             </div>
