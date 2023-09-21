@@ -33,7 +33,7 @@ export const Header: React.FC<HeaderProps> = ({ isAdmin }) => {
     ];
 
   return (
-    <header className="flex justify-between p-4 mt-[60px]">
+    <header className="flex justify-between p-4 mt-[10px] md:mt-[60px]">
       <div className="logo">
         <Link href={`/`}>
           <Image src="/mid-logo.png" alt="Logo" width={111} height={42} />

@@ -56,7 +56,7 @@ const Arquitectura: React.FC = () => {
 
   return (
     <div className="gap-10 md:grid-cols-2 max-w-[1140px] mx-auto px-4 md:px-[35px]">
-      <div className="flex justify-center gap-4 mb-[60px]">
+      <div className="flex flex-col items-center gap-4 mb-4 md:flex-row md:justify-center mb-[60px]">
         {options.map(option => (
           <div
             key={option.index}
