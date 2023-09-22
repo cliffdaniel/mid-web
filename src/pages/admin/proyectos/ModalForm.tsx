@@ -22,21 +22,25 @@ interface ModalFormProps {
 }
 
 const ModalForm: React.FC<ModalFormProps> = ({ open, project, onClose, onSubmit }) => {
-  const [image, setImage] = useState<File | null>(null);
+  const [images, setImages] = useState<File[]>([]);
   const [progress, setProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
   const [files, setFiles] = useState<string[]>([]);
 
   const handleChangeFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setImage(e.target.files[0]);
+    if (e.target.files && e.target.files.length > 0) {
+      setImages(Array.from(e.target.files));
     }
   };
 
   const handleUpload = () => {
-    if (image) {
-      setIsUploading(true);
+    if (images.length === 0) return;
 
+    setIsUploading(true);
+
+    const uploadedImages: string[] = [];
+
+    for (const image of images) {
       const timestamp = Date.now();
       const uniqueFileName = `${timestamp}_${image.name}`;
       const storageRef = ref(fireStoreStorage, `images/${uniqueFileName}`);
@@ -51,15 +55,16 @@ const ModalForm: React.FC<ModalFormProps> = ({ open, project, onClose, onSubmit 
         (error) => {
           setIsUploading(false);
         },
-        () => {
+        async () => {
           setIsUploading(false);
-          getDownloadURL(storageRef)
-            .then((url) => {
-              setFiles((prevFiles) => (prevFiles ? [...prevFiles, url] : [url]));
-            })
-            .catch((error) => {
-              console.error('Error al obtener la URL de la imagen:', error);
-            });
+          const downloadUrl = await getDownloadURL(storageRef);
+          uploadedImages.push(downloadUrl);
+
+          if (uploadedImages.length === images.length) {
+            console.log('Todas las imágenes se han subido:', uploadedImages);
+            setFiles((prevFiles) => (prevFiles ? [...prevFiles, ...uploadedImages] : uploadedImages));
+            setImages([]);
+          }
         }
       );
     }
@@ -259,12 +264,12 @@ const ModalForm: React.FC<ModalFormProps> = ({ open, project, onClose, onSubmit 
                 {files && <ImageList images={files} onDelete={handleDeleteImage} />}
               </div>
               <div>
-                <input type="file" onChange={handleChangeFile} disabled={isUploading} />
+                <input type="file" multiple onChange={handleChangeFile} disabled={isUploading} />
                 <Button
                   variant="contained"
                   color="primary"
                   onClick={handleUpload}
-                  disabled={!image || isUploading}
+                  disabled={images.length === 0 || isUploading}
                   style={{ backgroundColor: "#1976D2", color: "#fff" }}
                 >
                   Subir Imagen
