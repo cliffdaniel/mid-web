@@ -27,7 +27,7 @@ export const Footer: React.FC = () => {
   }, [isOpen]);
 
   return (
-    <footer className="flex items-center justify-center p-4 text-xs md:justify-between">
+    <footer className="fixed bottom-2 flex items-center justify-center p-4 text-xs md:justify-between bg-transparent w-full left-0 right-0 max-w-[1440px] mx-auto">
       <p className="text-black font-medium text-base leading-[26px]">
         © 2023 MID Estudio
       </p>
