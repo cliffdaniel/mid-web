@@ -58,7 +58,7 @@ const Proyectos: React.FC = () => {
     : carouselImages.filter(image => image.category === options[activeOption].text);
 
   return (
-    <div className="gap-10 py-10 md:grid-cols-2 max-w-[1140px] mx-auto px-4 md:px-[35px]">
+    <div className="gap-10 py-10 md:grid-cols-2 max-w-[1340px] mx-auto px-4 md:px-[35px]">
       <div className="flex justify-center gap-4 mb-[60px]">
         {options.map(option => (
           <div

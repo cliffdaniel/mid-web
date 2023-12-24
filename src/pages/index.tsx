@@ -35,7 +35,7 @@ const Home: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center justify-center mt-[170px] md:mt-[40px]">
-      <div className="mx-auto w-max max-w-full md:max-w-[1140px] p-4">
+      <div className="mx-auto w-max max-w-full md:max-w-[1340px] p-4">
         {!isLoading && (
           <CustomCarousel
             images={projects

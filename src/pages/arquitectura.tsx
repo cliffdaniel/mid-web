@@ -71,7 +71,7 @@ const Arquitectura: React.FC = () => {
   }, []);
 
   return (
-    <div className="relative gap-10 md:grid-cols-2 max-w-[1140px] mx-auto px-4 md:px-[35px]">
+    <div className="relative gap-10 md:grid-cols-2 max-w-[1340px] mx-auto px-4 md:px-[35px]">
       <div ref={stickyRef} className={`
         sticky flex-col transition-height duration-300 ease-in-out items-center
         top-[70px] md:top-0 z-50 bg-[#F2F2F2] flex flex-col items-center gap-4 md:flex-row md:justify-center mb-[30px]
