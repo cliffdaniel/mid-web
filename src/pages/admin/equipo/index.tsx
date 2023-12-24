@@ -13,6 +13,7 @@ interface Member {
   id: string | null;
   name: string;
   lastName: string;
+  images: string[];
   position: string;
   createdAt: any;
 }
