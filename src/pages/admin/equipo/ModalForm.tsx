@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Button,
   Modal,
@@ -6,14 +6,19 @@ import {
   Typography,
   TextField,
   Grid,
+  LinearProgress,
 } from '@mui/material';
 import { useFormik } from 'formik';
+import ImageList from '../../../components/admin/ImageList';
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { fireStoreStorage } from "./../../../config/firebase";
 
 interface Member {
   id: string | null;
   name: string;
   lastName: string;
   position: string;
+  images: string[]
   createdAt: any;
 }
 
@@ -25,12 +30,68 @@ interface ModalFormProps {
 }
 
 const ModalForm: React.FC<ModalFormProps> = ({ open, member, onClose, onSubmit }) => {
-   const formik = useFormik<Member>({
+  const [images, setImages] = useState<File[]>([]);
+  const [progress, setProgress] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
+  const [files, setFiles] = useState<string[]>([]);
+
+  const handleChangeFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setImages(Array.from(e.target.files));
+    }
+  };
+
+  const handleUpload = () => {
+    if (images.length === 0) return;
+
+    setIsUploading(true);
+
+    const uploadedImages: string[] = [];
+
+    for (const image of images) {
+      const timestamp = Date.now();
+      const uniqueFileName = `${timestamp}_${image.name}`;
+      const storageRef = ref(fireStoreStorage, `images/${uniqueFileName}`);
+      const uploadTask = uploadBytesResumable(storageRef, image);
+
+      uploadTask.on(
+        'state_changed',
+        (snapshot) => {
+          const percentage = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          setProgress(percentage);
+        },
+        (error) => {
+          setIsUploading(false);
+        },
+        async () => {
+          setIsUploading(false);
+          const downloadUrl = await getDownloadURL(storageRef);
+          uploadedImages.push(downloadUrl);
+
+          if (uploadedImages.length === images.length) {
+            console.log('Todas las imágenes se han subido:', uploadedImages);
+            setFiles((prevFiles) => (prevFiles ? [...prevFiles, ...uploadedImages] : uploadedImages));
+            setImages([]);
+          }
+        }
+      );
+    }
+  };
+
+  const handleDeleteImage = (indexToDelete: number) => {
+    const updatedImages = files?.filter((_, index) => index !== indexToDelete);
+    if (updatedImages) {
+      setFiles(updatedImages);
+    }
+  };
+
+  const formik = useFormik<Member>({
     initialValues: {
       id: '',
       name: '',
       lastName: '',
       position: '',
+      images: [] as string[],
       createdAt: '',
     },
     validate: (values) => {
@@ -65,8 +126,15 @@ const ModalForm: React.FC<ModalFormProps> = ({ open, member, onClose, onSubmit }
   useEffect(() => {
     if (member !== null) {
       formik.setValues(member);
+      setFiles(member.images);
     }
   }, [member]);
+
+  useEffect(() => {
+    if (files) {
+      formik.values.images = files;
+    }
+  }, [files])
 
   return (
     <Modal open={open} onClose={handleClose}>
@@ -121,6 +189,24 @@ const ModalForm: React.FC<ModalFormProps> = ({ open, member, onClose, onSubmit }
                 error={!!formik.errors.position}
                 helperText={formik.errors.position}
               />
+            </Grid>
+            <Grid item xs={12}>
+              <div style={{ marginBottom: '15px' }}>
+                {files && <ImageList images={files} onDelete={handleDeleteImage} />}
+              </div>
+              <div>
+                <input type="file" multiple onChange={handleChangeFile} disabled={isUploading} />
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleUpload}
+                  disabled={images.length === 0 || isUploading}
+                  style={{ backgroundColor: "#1976D2", color: "#fff" }}
+                >
+                  Subir Imagen
+                </Button>
+                {isUploading && <LinearProgress variant="determinate" value={progress} style={{ marginTop: '15px' }} />}
+              </div>
             </Grid>
           </Grid>
           <Button

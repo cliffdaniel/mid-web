@@ -190,7 +190,7 @@ const ModalForm: React.FC<ModalFormProps> = ({ open, project, onClose, onSubmit 
             <Grid item xs={6}>
               <TextField
                 name="location"
-                label="Locación"
+                label="Ubicación"
                 fullWidth
                 value={formik.values.location || ''}
                 onChange={formik.handleChange}

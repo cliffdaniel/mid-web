@@ -10,6 +10,7 @@ interface Member {
   name: string;
   lastName: string;
   position: string;
+  images: string[];
   createdAt: any;
 }
 
@@ -17,6 +18,12 @@ const Estudio: React.FC = () => {
   const carouselImages = ['/carousel-estudio.png', '/carousel-estudio.png', '/carousel-estudio.png', '/carousel-estudio.png'];
   const [members, setMembers] = useState<Member[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  const [selectedImage, setSelectedImage] = useState('');
+
+  const handleMemberClick = (member: Member) => {
+    setSelectedImage(member.images[0]);
+  };
 
   useEffect(() => {
     const fetchMembers = async () => {
@@ -30,6 +37,7 @@ const Estudio: React.FC = () => {
             members.unshift( { ...doc.data(), id: doc.id })
           });
           setMembers(members);
+          setSelectedImage(members[0].images[0]);
           setIsLoading(false);
         });
       } catch (error) {
@@ -57,17 +65,19 @@ const Estudio: React.FC = () => {
         </div>
       </div>
       <div>
-
-      </div>
-      <div>
-        <div>
+        <div className='md:px-[60px]'>
           <h4 className="mb-4 text-2xl font-bold">Equipo de Trabajo</h4>
           {!isLoading && members.map((member) => (
-            <div key={member.id}>
+            <div key={member.id} className='mb-[15px] cursor-pointer' onClick={() => handleMemberClick(member)}>
               <p className="text-lg font-semibold">{member.name} {member.lastName}</p>
               <p className="text-gray-600">{member.position}</p>
             </div>
           ))}
+        </div>
+      </div>
+      <div className="w-full">
+        <div className="flex items-center justify-center">
+          {selectedImage && <img src={selectedImage} alt="Member" />}
         </div>
       </div>
     </div>

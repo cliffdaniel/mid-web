@@ -32,12 +32,12 @@ export const Header: React.FC<HeaderProps> = ({ isAdmin }) => {
     ]
     : [
       { text: 'estudio', link: '/estudio' },
-      { text: 'news', link: '/news' },
-      { text: 'proyectos', link: '/proyectos' },
+      { text: 'arquitectura', link: '/arquitectura' },
+      { text: 'diseño', link: '/diseno' },
     ];
 
   return (
-    <header className="fixed z-[100] flex justify-between p-4 md:mt-[10px] md:mt-[60px] items-center bg-[#F2F2F2] md:bg-transparent w-full left-0 right-0 max-w-[1440px] mx-auto">
+    <header className="fixed z-[100] flex justify-between p-4 md:mt-[10px] md:mt-[60px] items-center bg-[#F2F2F2] md:bg-transparent w-full left-0 right-0 max-w-[1640px] mx-auto">
       <div className="logo">
         <Link href={`/`}>
           <Image src="/mid-logo.png" alt="Logo" width={111} height={42} />
@@ -54,31 +54,9 @@ export const Header: React.FC<HeaderProps> = ({ isAdmin }) => {
             <ul className="text-right">
               {menuItems.map((item, index) => (
                 <li key={index}>
-                  {item.text === 'proyectos' && !isAdmin ? (
-                    <>
-                      <label className="block py-1"
-                        onMouseEnter={() => toggleProject()}
-                        onClick={() => toggleProject()}>
-                        {item.text}
-                      </label>
-                      {showSubMenu && <ul>
-                        <li>
-                          <Link href="/arquitectura" className="block py-1" onClick={toggleMenu}>
-                            arquitectura
-                          </Link>
-                        </li>
-                        <li>
-                          <Link href="/diseno" className="block py-1" onClick={toggleMenu}>
-                            diseño
-                          </Link>
-                        </li>
-                      </ul>}
-                    </>
-                  ) : (
-                    <Link href={item.link} className="block py-1" onClick={toggleMenu}>
-                      {item.text}
-                    </Link>
-                  )}
+                  <Link href={item.link} className="block py-1" onClick={toggleMenu}>
+                    {item.text}
+                  </Link>
                 </li>
               ))}
             </ul>

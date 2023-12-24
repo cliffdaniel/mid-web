@@ -103,34 +103,34 @@ const Arquitectura: React.FC = () => {
               <p className="text-gray-300 text-center font-roboto font-light text-xs leading-[12.1px] tracking-[1.75px] uppercase mb-4">
                 {project.location}
               </p>
-              <div className="text-sm font-medium leading-6 text-center text-gray-800 uppercase tracking-1">
+              <div className="text-sm font-medium leading-6 text-center text-gray-800 tracking-1">
                 Descripción: {project.description}
               </div>
-              <div className="text-sm font-medium leading-6 text-center text-gray-800 uppercase tracking-1">
-                Locación: {project.location}
+              <div className="text-sm font-medium leading-6 text-center text-gray-800 tracking-1">
+                Ubicación: {project.location}
               </div>
-              <div className="text-sm font-medium leading-6 text-center text-gray-800 uppercase tracking-1">
+              <div className="text-sm font-medium leading-6 text-center text-gray-800 tracking-1">
                 Área: {project.area}
               </div>
-              <div className="text-sm font-medium leading-6 text-center text-gray-800 uppercase tracking-1">
+              <div className="text-sm font-medium leading-6 text-center text-gray-800 tracking-1">
                 Cliente: {project.client}
               </div>
-              <div className="text-sm font-medium leading-6 text-center text-gray-800 uppercase tracking-1">
+              <div className="text-sm font-medium leading-6 text-center text-gray-800 tracking-1">
                 Arquitecto: {project.architect}
               </div>
-              <div className="text-sm font-medium leading-6 text-center text-gray-800 uppercase tracking-1">
+              <div className="text-sm font-medium leading-6 text-center text-gray-800 tracking-1">
                 Mutua: {project.mutua}
               </div>
-              <div className="text-sm font-medium leading-6 text-center text-gray-800 uppercase tracking-1">
+              <div className="text-sm font-medium leading-6 text-center text-gray-800 tracking-1">
                 Colaboradores: {project.employee}
               </div>
-              <div className="text-sm font-medium leading-6 text-center text-gray-800 uppercase tracking-1">
+              <div className="text-sm font-medium leading-6 text-center text-gray-800 tracking-1">
                 Constructora: {project.company}
               </div>
-              <div className="text-sm font-medium leading-6 text-center text-gray-800 uppercase tracking-1">
+              <div className="text-sm font-medium leading-6 text-center text-gray-800 tracking-1">
                 Año: {project.year}
               </div>
-              <div className="text-sm font-medium leading-6 text-center text-gray-800 uppercase tracking-1">
+              <div className="text-sm font-medium leading-6 text-center text-gray-800 tracking-1">
                 Fotografía: {project.photography}
               </div>
             </div>
