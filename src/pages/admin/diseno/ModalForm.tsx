@@ -13,10 +13,11 @@ import {
   Select
 } from '@mui/material';
 import { useFormik } from 'formik';
-import ImageList from '../../../components/admin/ImageList';
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { fireStoreStorage } from "./../../../config/firebase";
+import { fireStoreStorage } from "@/config/firebase";
+import ImageList from '@/components/admin/ImageList';
 import Project from '@/models/project';
+import types from '@/utils/types';
 
 interface ModalFormProps {
   open: boolean;
@@ -126,11 +127,15 @@ const ModalForm: React.FC<ModalFormProps> = ({ open, project, onClose, onSubmit 
   }, [files])
 
   useEffect(() => {
-    if (project !== null) {
+    if (project !== null && Object.keys(project).length !== 0) {
       formik.setValues(project);
       setFiles(project.images);
     }
   }, [project]);
+
+  useEffect(() => {
+    handleUpload();
+  }, [images]);
 
   const handleClose = () => {
     formik.resetForm();
@@ -148,8 +153,8 @@ const ModalForm: React.FC<ModalFormProps> = ({ open, project, onClose, onSubmit 
           bgcolor: 'background.paper',
           boxShadow: 24,
           p: 4,
-          minWidth: 600,
           maxHeight: '95vh',
+          minWidth: '375px',
           overflow: 'auto',
         }}
       >
@@ -273,9 +278,11 @@ const ModalForm: React.FC<ModalFormProps> = ({ open, project, onClose, onSubmit 
                   value={formik.values.type || ''}
                   onChange={formik.handleChange}
                 >
-                  <MenuItem value="mobiliario">Mobiliario</MenuItem>
-                  <MenuItem value="interiores">Interiores</MenuItem>
-                  <MenuItem value="stands">Stands</MenuItem>
+                  {types.map((typeOption) => (
+                    <MenuItem key={typeOption} value={typeOption}>
+                      {typeOption}
+                    </MenuItem>
+                  ))}
                 </Select>
               </FormControl>
             </Grid>
@@ -283,28 +290,43 @@ const ModalForm: React.FC<ModalFormProps> = ({ open, project, onClose, onSubmit 
               <div style={{ marginBottom: '15px' }}>
                 {files && <ImageList images={files} onDelete={handleDeleteImage} />}
               </div>
-              <div>
-                <input type="file" multiple onChange={handleChangeFile} disabled={isUploading} />
+            </Grid>
+            <Grid item xs={12}>
+              <div className="relative">
+                <input
+                  type="file"
+                  multiple
+                  onChange={handleChangeFile}
+                  disabled={isUploading}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                />
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={handleUpload}
-                  disabled={images.length === 0 || isUploading}
-                  style={{ backgroundColor: "#1976D2", color: "#fff" }}
-                >
-                  Subir Imagen
+                  type="button"
+                  style={{ backgroundColor: '#D2A319' }}
+                  disabled={isUploading}
+                  className="z-0">
+                  Cargar Imagen
                 </Button>
-                {isUploading && <LinearProgress variant="determinate" value={progress} style={{ marginTop: '15px' }} />}
               </div>
             </Grid>
+            <Grid item xs={12}>
+              {isUploading && <LinearProgress color='info' variant="indeterminate" value={progress} style={{ marginTop: '15px' }} />}
+            </Grid>
           </Grid>
-          <Button
-            variant="contained"
-            color="primary"
-            type="submit"
-            style={{ backgroundColor: '#1976D2', marginTop: '45px' }}>
-            Agregar
-          </Button>
+          <Grid container justifyContent="flex-end">
+            <Grid item>
+              <Button
+                variant="contained"
+                color="primary"
+                type="submit"
+                style={{ backgroundColor: '#1976D2', marginTop: '15px' }}
+              >
+                {formik.values.id ? 'Actualizar' : 'Agregar'}
+              </Button>
+            </Grid>
+          </Grid>
         </form>
       </Box>
     </Modal>

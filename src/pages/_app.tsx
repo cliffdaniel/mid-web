@@ -1,5 +1,5 @@
 "use client";
-import "../styles/global.css";
+import "../styles/global.scss";
 import { AppProps } from "next/app";
 import { MainLayout } from '../layouts/MainLayout';
 import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
@@ -17,7 +17,6 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
   const isAdminPage = Component.toString().includes('/admin/');
 
   return (
-    <>
     <AuthProvider>
       {isAdminPage ? (
         <ThemeProvider theme={theme}>
@@ -31,8 +30,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
           <Component {...pageProps} />
         </MainLayout>
       )}
-      </AuthProvider>
-    </>
+    </AuthProvider>
   );
 };
 

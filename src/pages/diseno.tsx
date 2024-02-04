@@ -1,14 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
+import Image from 'next/image';
 import fireStoreDB from "@/config/firebase";
 import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
 import Project from "@/models/project";
 import CustomCarousel from "../components/Carousel";
 
 const Diseno: React.FC = () => {
-  const [activeOption, setActiveOption] = useState(0);
+  const [activeOption, setActiveOption] = useState('');
   const [projects, setProjects] = useState<Project[]>([]);
   const [project, setProject] = useState<Project | null>(null);
+  const [types, setTypes] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -36,29 +38,30 @@ const Diseno: React.FC = () => {
     fetchProjects();
   }, []);
 
-  const handleOptionClick = (optionIndex: number) => {
+  const handleOptionClick = (optionIndex: string) => {
     setActiveOption(optionIndex);
     setProject(null);
   };
 
-  const options = [
-    { text: "todos", index: 0 },
-    { text: "mobiliario", index: 1 },
-    { text: "interiores", index: 2 },
-    { text: "stands", index: 3 },
-  ];
-
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
-  const filteredImages =
-    activeOption === 0
-      ? projects
-      : projects.filter(
-          (project) => project.type === options[activeOption].text
-        );
+  const filteredImages = activeOption === ''
+    ? projects
+    : projects.filter(project => activeOption === project.type);
 
   const [esSticky, setEsSticky] = useState(false);
   const stickyRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const uniqueTypes = new Set<string>();
+
+    projects.forEach(project => {
+      uniqueTypes.add(project.type);
+    });
+
+    const projectTypes = Array.from(uniqueTypes);
+    setTypes(projectTypes);
+  }, [projects]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -76,24 +79,17 @@ const Diseno: React.FC = () => {
 
   return (
     <div className="gap-10 md:grid-cols-2 max-w-[1340px] mx-auto px-4 md:px-[35px]">
-      <div ref={stickyRef} className={`
-        sticky flex-col transition-height duration-300 ease-in-out items-center
-        top-[70px] md:top-0 z-50 bg-[#F2F2F2] flex flex-col items-center gap-4 md:flex-row md:justify-center mb-[30px]
+      <div ref={stickyRef} className={`sticky transition-height duration-300 ease-in-out top-[70px] md:top-0 z-50 bg-[#F2F2F2] flex flex-col items-center gap-4 md:flex-row md:justify-center mb-[30px]
         ${esSticky ? 'h-[150px] md:h-[150px]' : 'h-[160px] md:h-[50px]'}`}>
-        {options.map((option) => (
-          <div
-            key={option.index}
-            className={`cursor-pointer text-center text-base font-weight-500 ${
-              activeOption === option.index ? "border-b border-black" : ""
-            }`}
-            onClick={() => handleOptionClick(option.index)}
-          >
-            {option.text}
+        <button type="button" onClick={() => handleOptionClick('')}>Todos</button>
+        {types.map(type => (
+          <div key={type} className={`cursor-pointer text-center text-base font-weight-500 ${activeOption === type ? 'border-b border-black' : ''}`}>
+            <button type="button" onClick={() => handleOptionClick(type)}>{type}</button>
           </div>
         ))}
       </div>
       <div className="flex flex-col top-[90px] bottom-0 left-0 right-0 overflow-hidden overflow-y-auto">
-        {options[activeOption].text === 'interiores' && <div className="flex justify-center w-full mx-auto mb-4 text-center">partner: Gela Estudio</div>}
+        {activeOption === 'Interiorismo' && <div className="flex justify-center w-full mx-auto mb-4 text-center">partner: Gela Estudio</div>}
         {project && (
           <div>
             <CustomCarousel
@@ -146,21 +142,19 @@ const Diseno: React.FC = () => {
         {!project && (<ResponsiveMasonry columnsCountBreakPoints={{ 0: 1, 750: 2 }}>
           <Masonry gutter="20px">
             {filteredImages.map((item, index) => (
-              <div
-                key={index}
-                className="relative overflow-hidden rounded-md"
-                onMouseEnter={() => setHoveredIndex(index)}
-                onMouseLeave={() => setHoveredIndex(null)}
-              >
-                <img
+              <div key={item.images[0]} className="relative overflow-hidden rounded-md">
+                <Image
                   src={item.images[0]}
                   alt={`Carousel ${index}`}
+                  width={1}
+                  height={1}
+                  layout="responsive"
                   className="w-full h-auto"
+                  onMouseEnter={() => setHoveredIndex(index)}
                 />
                 {hoveredIndex === index && (
-                  <div className="absolute top-0 bottom-0 left-0 right-0 flex items-center justify-center text-white bg-black bg-opacity-75 cursor-pointer"
-                    onClick={() => setProject(item)}>
-                    {item.name}
+                  <div className="absolute top-0 bottom-0 left-0 right-0 flex items-center justify-center text-white bg-black bg-opacity-75 cursor-pointer">
+                    <button type="button" onClick={() => setProject(item)}>{item.name}</button>
                   </div>
                 )}
               </div>

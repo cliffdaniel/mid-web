@@ -1,86 +1,33 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { useAuth } from "../../../contexts/AuthContext";
-import { collection, addDoc, setDoc, doc, deleteDoc, onSnapshot, query, orderBy, Timestamp } from "firebase/firestore";
+import { collection, addDoc, setDoc, doc, deleteDoc, Timestamp } from "firebase/firestore";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Button } from "@mui/material";
-import ModalForm from "./ModalForm";
+import { useAuth } from "@/contexts/AuthContext";
 import DeleteIcon from '@mui/icons-material/Delete';
-import HomeIcon from '@mui/icons-material/Home';
-import fireStoreDB from "./../../../config/firebase";
-
-interface Project {
-  id: string | null;
-  name: string;
-  description: string;
-  area: string;
-  location: string;
-  client: string;
-  architect: string;
-  mutua: string;
-  employee: string;
-  company: string;
-  year: string;
-  photography: string;
-  images: string[];
-  type: string;
-  createdAt: any;
-}
+import Project from "@/models/project";
+import fireStoreDB from "@/config/firebase";
+import useFetchProjects from "@/hooks/useFetchProjects";
+import ModalForm from "./ModalForm";
 
 const Projects: React.FC = () => {
-  const { isAuthenticated } = useAuth();
   const router = useRouter();
-
-  const [projects, setProjects] = useState<Project[]>([]);
+  const { isAuthenticated } = useAuth();
   const [project, setProject] = useState<Project>({} as Project);
-  const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [projects, isLoading, fetchProjects] = useFetchProjects('diseno');
 
   useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const projectsCollection = collection(fireStoreDB, 'diseno');
-        const orderedQuery = query(projectsCollection, orderBy('createdAt', 'desc'));
-
-        onSnapshot(orderedQuery, (response: any) => {
-          const projects: any = []
-          response.forEach((doc: any) => {
-            projects.unshift( { ...doc.data(), id: doc.id })
-          });
-          setProjects(projects);
-          setIsLoading(false);
-        });
-      } catch (error) {
-        console.error("Error al obtener la lista de proyectos:", error);
-      }
-    };
-
     if (!isAuthenticated) {
       router.push("/admin/login");
     } else {
       fetchProjects();
     }
+    fetchProjects();
   }, []);
 
-  if (!isAuthenticated) {
-    return null;
-  }
-
   const columns: GridColDef[] = [
-    {
-      field: "id",
-      headerName: "ID",
-      align: 'center',
-      width: 7,
-      renderCell: () => {
-        return (
-          <div>
-            <HomeIcon />
-          </div>
-        );
-      },
-    },
-    { field: "name", headerName: "Nombre", flex: 1 },
+    { field: "name", headerName: "Nombre", width: 200 },
     { field: "description", headerName: "Descripción", flex: 1 },
     { field: "area", headerName: "Área", flex: 1 },
     { field: "location", headerName: "Ubicación", flex: 1 },
@@ -97,6 +44,7 @@ const Projects: React.FC = () => {
       headerName: '',
       align: 'center',
       width: 100,
+      sortable: false,
       renderCell: (params) => {
         const handleDeleteClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
           event.stopPropagation();
@@ -150,7 +98,7 @@ const Projects: React.FC = () => {
   return (
     <div className="px-4 py-12 sm:px-6 lg:px-8">
       <header>
-        <div className="py-6 mx-auto max-w-7xl">
+        <div className="py-6 max-w-7xl">
           <h1 className="text-3xl font-bold leading-tight text-gray-900">
             Panel de Proyectos de Diseño
           </h1>

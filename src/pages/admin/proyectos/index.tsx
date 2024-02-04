@@ -132,7 +132,7 @@ const Projects: React.FC = () => {
   return (
     <div className="px-4 py-12 sm:px-6 lg:px-8">
       <header>
-        <div className="py-6 mx-auto max-w-7xl">
+        <div className="py-6 max-w-7xl">
           <h1 className="text-3xl font-bold leading-tight text-gray-900">
             Panel de Proyectos
           </h1>
