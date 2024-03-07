@@ -79,13 +79,14 @@ const Diseno: React.FC = () => {
 
   return (
     <div className="gap-10 md:grid-cols-2 max-w-[1340px] mx-auto px-4 md:px-[35px]">
-      <div ref={stickyRef} className={`sticky transition-height duration-300 ease-in-out top-[70px] md:top-0 z-50 bg-[#F2F2F2] flex flex-col items-center gap-4 md:flex-row md:justify-center mb-[30px]
-        ${esSticky ? 'h-[150px] md:h-[150px]' : 'h-[160px] md:h-[50px]'}`}>
-        <button type="button" onClick={() => handleOptionClick('')}>Todos</button>
+      <div ref={stickyRef} className={`sticky transition-height duration-300 ease-in-out top-[72px] md:top-[115px] z-50 bg-[#F2F2F2] flex flex-col items-center gap-4 md:flex-row md:justify-center mb-[30px] ${esSticky ? 'h-[150px] md:h-[150px]' : 'h-[160px] md:h-[50px]'}`}>
         {types.map(type => (
-          <div key={type} className={`cursor-pointer text-center text-base font-weight-500 ${activeOption === type ? 'border-b border-black' : ''}`}>
-            <button type="button" onClick={() => handleOptionClick(type)}>{type}</button>
-          </div>
+          <>
+            <button type="button" onClick={() => handleOptionClick('')}>Todos</button>
+            <div key={type} className={`cursor-pointer text-center text-base font-weight-500 ${activeOption === type ? 'border-b border-black' : ''}`}>
+              <button type="button" onClick={() => handleOptionClick(type)}>{type}</button>
+            </div>
+          </>
         ))}
       </div>
       <div className="flex flex-col top-[90px] bottom-0 left-0 right-0 overflow-hidden overflow-y-auto">

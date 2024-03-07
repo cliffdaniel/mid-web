@@ -37,7 +37,7 @@ export const Header: React.FC<HeaderProps> = ({ isAdmin }) => {
     ];
 
   return (
-    <header className="fixed z-[100] flex justify-between p-4 md:mt-[10px] md:mt-[60px] items-center bg-[#F2F2F2] md:bg-transparent w-full left-0 right-0 max-w-[1640px] mx-auto">
+    <header className="fixed z-[3000] flex justify-between p-4 md:pt-[60px] items-center bg-[#F2F2F2] w-full left-0 right-0 max-w-[1640px] mx-auto">
       <div className="logo">
         <Link href={`/`}>
           <Image src="/mid-logo.png" alt="Logo" width={111} height={42} />
