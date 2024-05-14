@@ -36,10 +36,10 @@ export const Footer: React.FC = () => {
               <p>Cortaderas 121, Yanahuara</p>
               <p>04013 Arequipa</p>
               <p>
-                <a href="tel:054-529179" className="text-white">054-529179</a>
+                <a href="tel:(01)7397868" className="text-white">(01) 7397868</a>
               </p>
               <p>
-                <a href="mailto:administracion@midarquitectos.com" className="text-white">administracion@midarquitectos.com</a>
+                <a href="mailto:eromero@projektingconsultores.com" className="text-white">eromero@projektingconsultores.com</a>
               </p>
             </div>
             <p className="text-white font-medium text-base leading-[26px]">
